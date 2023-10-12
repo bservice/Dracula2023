@@ -10,7 +10,7 @@
 #include "RPU_Config.h"
 #include "RPU.h"
 #include "DropTargets.h"
-#include "ExampleMachine.h"
+#include "Dracula2023.h"
 #include "SelfTestAndAudit.h"
 #include "AudioHandler.h"
 #include "LampAnimations.h"
@@ -2332,16 +2332,16 @@ int HandleSystemSwitches(int curState, byte switchHit) {
   int returnState = curState;
   switch (switchHit) {
     case SW_SELF_TEST_SWITCH:
-#if (RPU_MPU_ARCHITECTURE<10)
+if (RPU_MPU_ARCHITECTURE<10)
       returnState = MACHINE_STATE_TEST_LAMPS;
-#else      
+else      
       returnState = MACHINE_STATE_TEST_BOOT;
-#endif      
+      
       SetLastSelfTestChangedTime(CurrentTime);
       break;
-    case SW_COIN_1:
-    case SW_COIN_2:
-    case SW_COIN_3:
+    case SW_RIGHT_COIN:
+    case SW_LEFT_COIN:
+    case SW_CENTER_COIN:
       AddCoinToAudit(SwitchToChuteNum(switchHit));
       AddCoin(SwitchToChuteNum(switchHit));
       break;
@@ -2365,7 +2365,16 @@ int HandleSystemSwitches(int curState, byte switchHit) {
       // from the outhole to the re-shooter ramp
 //      MoveBallFromOutholeToRamp(true);
       break;
-    case SW_PLUMB_TILT:
+    case SW_ROLL_TILT:
+        
+        RPU_DisableSolenoidStack();
+        RPU_SetDisableFlippers(true);
+        RPU_TurnOffAllLamps();
+        RPU_SetLampState(LAMP_HEAD_TILT, 1);
+        Audio.StopAllAudio();
+        
+        PlaySoundEffect(SOUND_EFFECT_TILT_WARNING);
+    case SW_PLUMB_TILT:    
       // This should be debounced
       if ((CurrentTime - LastTiltWarningTime) > TILT_WARNING_DEBOUNCE_TIME) {
         LastTiltWarningTime = CurrentTime;
