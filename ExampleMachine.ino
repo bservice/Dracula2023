@@ -2366,8 +2366,6 @@ int HandleSystemSwitches(int curState, byte switchHit) {
 //      MoveBallFromOutholeToRamp(true);
       break;
     case SW_PLUMB_TILT:
-//    case SW_ROLL_TILT:
-    case SW_PLAYFIELD_TILT:
       // This should be debounced
       if ((CurrentTime - LastTiltWarningTime) > TILT_WARNING_DEBOUNCE_TIME) {
         LastTiltWarningTime = CurrentTime;
